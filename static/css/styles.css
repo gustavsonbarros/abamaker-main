@@ -1,0 +1,259 @@
+/* =======================================
+   RESET E ESTILIZAÇÃO GLOBAL
+======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Definir fonte global */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: block; /* Alterado de flex para block */
+}
+
+/* =======================================
+   NAVEGAÇÃO
+======================================== */
+.navbar {
+    background-color: #0073e6;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para a navbar */
+}
+
+.navbar-brand, .nav-link {
+    color: #fff !important;
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    transform: translateY(-2px); /* Efeito de elevação */
+}
+
+/* Melhorando o foco nos links */
+.navbar-nav .nav-item .nav-link:focus {
+    outline: 3px solid #f8f9fa; /* Contorno ao focar em links */
+    outline-offset: 2px;
+}
+
+/* =======================================
+   JUMBOTRON
+======================================== */
+.jumbotron {
+    background-color: #005bb5;
+    color: white;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.jumbotron h1, .jumbotron p {
+    font-weight: 500;
+}
+
+.jumbotron:hover {
+    background-color: #004494; /* Mudança sutil ao passar o mouse */
+    transform: scale(1.03); /* Efeito de escala ao passar o mouse */
+}
+
+/* =======================================
+   CARROSSEL
+======================================== */
+.carousel-item img {
+    border-radius: 10px;
+    transition: transform 0.3s ease; /* Efeito suave na imagem do carrossel */
+}
+
+.carousel-item img:hover {
+    transform: scale(1.05); /* Aumentar imagem ao passar o mouse */
+}
+
+/* =======================================
+   CARD
+======================================== */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Card com foco */
+.card:focus-within {
+    box-shadow: 0 0 0 3px rgba(0, 115, 230, 0.5); /* Destacar o card ao focar em seus elementos internos */
+}
+
+/* =======================================
+   BOTÕES
+======================================== */
+.btn-outline-primary, .btn-outline-secondary {
+    border-radius: 20px;
+    padding: 10px 20px;
+    border: 2px solid #0073e6;
+    background-color: transparent;
+    color: #0073e6;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover, .btn-outline-secondary:hover {
+    background-color: #0073e6;
+    color: white;
+    border-color: #0073e6;
+    transform: translateY(-2px); /* Efeito de elevação */
+}
+
+/* Melhorando o foco nos botões */
+.btn-outline-primary:focus, .btn-outline-secondary:focus {
+    outline: 3px solid #f8f9fa;
+    outline-offset: 2px;
+}
+
+/* =======================================
+   RESPONSIVIDADE
+======================================== */
+@media (max-width: 768px) {
+    .navbar-nav {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .carousel-inner {
+        margin-top: 1rem;
+    }
+
+    .card {
+        margin-bottom: 1.5rem;
+        border-radius: 12px; /* Tornando os cards mais arredondados */
+    }
+
+    .jumbotron {
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+    
+    .container-register {
+        max-width: 90%; /* Ajusta o tamanho do formulário no mobile */
+    }
+
+    footer {
+        font-size: 0.9rem;
+    }
+}
+
+/* =======================================
+   ESTILOS GERAIS PARA O CONTEÚDO
+======================================== */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: block; /* Alterado de flex para block */
+}
+
+.container-register {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Estilo do card de registro */
+.card-register {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease; /* Efeito de transição suave para o card */
+}
+
+.card-register:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+    padding: 30px;
+}
+
+/* Flash message */
+.flash-message {
+    display: none;
+    animation: slideIn 0.5s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Centralizar o conteúdo dentro do container */
+.text-center {
+    text-align: center;
+}
+
+/* =======================================
+   STYLE.CSS ADICIONAL
+======================================== */
+body {
+    background-color: #f4f7f6; /* Cor de fundo suave */
+}
+
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave para o card */
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+h2 {
+    font-weight: 500;
+}
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+}
+
+/* Estilo para o botão */
+.btn-voltar {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    text-align: center;
+}
+
+.btn-voltar:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.btn-voltar i {
+    margin-right: 8px; /* Espaço entre o ícone e o texto */
+}
+
+/* Ajuste no texto */
+.btn-voltar span {
+    font-weight: bold;
+}

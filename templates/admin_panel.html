@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Painel Administrativo para Gestão de Projetos e Instituições">
+    <title>Painel Administrativo</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Estilo personalizado -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            height: 100vh;
+            position: sticky;
+            top: 0;
+        }
+        .sidebar header {
+            margin-bottom: 1rem;
+        }
+        .sidebar .nav-link.active {
+            font-weight: bold;
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex flex-column flex-md-row">
+        <!-- Barra lateral -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar p-3">
+            <div class="position-sticky">
+                <header>
+                    <h2 class="h4">Painel Administrativo</h2>
+                    <a href="/" class="btn btn-link">Voltar para a Tela Inicial</a>
+                    <a href="/logout" class="btn btn-link">Sair</a>
+                </header>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#avaliacao-conteudo">
+                            <i class="bi bi-file-earmark-check"></i> Avaliação de Projetos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#gestao-instituicoes">
+                            <i class="bi bi-building"></i> Gestão de Instituições
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Conteúdo principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-4">
+            <!-- Gestão de Instituições -->
+            <section id="gestao-instituicoes" class="mt-5">
+                <h2>Gestão de Instituições</h2>
+                <div class="d-flex justify-content-between mb-3">
+                    <input type="text" id="searchInstituicao" class="form-control w-50" placeholder="Pesquisar Instituição">
+                    <a href="/adicionar_instituicao" class="btn btn-primary">Adicionar Nova Instituição</a>
+                    <div>
+                        <button class="btn btn-info" onclick="gerarRelatorio('csv')">Gerar Relatório</button>
+                    </div>
+                </div>
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Instituição</th>
+                                <th>Status</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaInstituicoes">
+                            {% for instituicao in instituicoes %}
+                            <tr id="instituicao-{{ instituicao.id }}">
+                                <th>{{ instituicao.id }}</th>
+                                <td>{{ instituicao.nome }}</td>
+                                <td><span class="badge bg-{{ 'success' if instituicao.status == 'Aprovada' else 'warning' }}">{{ instituicao.status }}</span></td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" onclick="suspenderInstituicao({{ instituicao.id }})">Suspender</button>
+                                    <button class="btn btn-success btn-sm" onclick="reativarInstituicao({{ instituicao.id }})">Reativar</button>
+                                    <button class="btn btn-danger btn-sm" onclick="confirmarExclusao({{ instituicao.id }}, '{{ instituicao.nome }}')">Excluir</button>
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Avaliação de Projetos -->
+            <section id="avaliacao-conteudo" class="mt-5">
+                <h2>Avaliação de Projetos</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <input type="text" id="searchProjeto" class="form-control w-50" placeholder="Pesquisar Projeto">
+                            <select id="filterInstituicaoStatus" class="form-select w-25">
+                                <option value="">Filtrar por Status</option>
+                                <option value="Aprovada">Aprovada</option>
+                                <option value="Suspensa">Suspensa</option>
+                            </select>
+                        </div>
+                        <div class="table-responsive mt-3">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nome do Projeto</th>
+                                        <th>Data de Submissão</th>
+                                        <th>Status</th>
+                                        <th>Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaProjetos">
+                                    {% for projeto in projetos %}
+                                    <tr>
+                                        <th>{{ projeto.id }}</th>
+                                        <td>{{ projeto.nome }}</td>
+                                        <td>{{ projeto.data_submissao }}</td>
+                                        <td><span class="badge bg-{{ 'warning' if projeto.status == 'Pendente' else projeto.status | lower }}">{{ projeto.status }}</span></td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm" onclick="abrirModalProjeto({{ projeto.id }}, '{{ projeto.nome }}', '{{ projeto.data_submissao }}', '{{ projeto.status }}', 'Descrição do projeto aqui')">
+                                                Ver Detalhes
+                                            </button>
+                                            <button class="btn btn-success btn-sm" onclick="aprovarProjeto(this, {{ projeto.id }})">Aprovar</button>
+                                            <button class="btn btn-danger btn-sm" onclick="rejeitarProjeto(this, {{ projeto.id }})">Rejeitar</button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal para Pré-visualização de Projetos -->
+    <div class="modal fade" id="modalProjeto" tabindex="-1" aria-labelledby="modalProjetoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalProjetoLabel">Detalhes do Projeto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="modalNomeProjeto">Nome do Projeto</h4>
+                    <p><strong>Data de Submissão:</strong> <span id="modalDataSubmissao"></span></p>
+                    <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                    <p id="modalDescricao">Descrição completa do projeto será exibida aqui.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Função para suspender a instituição
+        function suspenderInstituicao(id) {
+            fetch(`/suspender_instituicao/${id}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const row = document.getElementById(`instituicao-${id}`);
+                        row.querySelector('td:nth-child(3)').innerHTML = '<span class="badge bg-warning">Suspensa</span>';
+                        alert(`Instituição '${data.nome}' suspensa com sucesso!`);
+                    } else {
+                        alert(data.message || 'Erro ao suspender a instituição.');
+                    }
+                })
+                .catch(error => {
+                    alert("Erro ao comunicar com o servidor: " + error);
+                });
+        }
+
+        // Função para reativar a instituição
+        function reativarInstituicao(id) {
+            fetch(`/reativar_instituicao/${id}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const row = document.getElementById(`instituicao-${id}`);
+                        row.querySelector('td:nth-child(3)').innerHTML = '<span class="badge bg-success">Aprovada</span>';
+                        alert(`Instituição '${data.nome}' reativada com sucesso!`);
+                    } else {
+                        alert(data.message || 'Erro ao reativar a instituição.');
+                    }
+                })
+                .catch(error => {
+                    alert("Erro ao comunicar com o servidor: " + error);
+                });
+        }
+
+        function confirmarExclusao(id, nome) {
+    if (confirm(`Tem certeza de que deseja excluir a instituição '${nome}'?`)) {
+        excluirInstituicao(id);
+    }
+}
+
+function excluirInstituicao(id) {
+    // Enviar requisição para excluir a instituição via fetch
+    fetch(`/excluir_instituicao/${id}`, { method: 'DELETE' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remover a linha da tabela se a exclusão for bem-sucedida
+                const linha = document.getElementById(`instituicao-${id}`);
+                linha.remove();  // Remove a linha da tabela
+
+                alert(`Instituição excluída com sucesso!`);
+            } else {
+                alert(`Erro ao excluir a instituição: ${data.message || 'Erro desconhecido'}`);
+            }
+        })
+        .catch(error => {
+            alert(`Erro de comunicação: ${error}`);
+        });
+}
+
+
+        // Função para abrir o modal de detalhes do projeto
+        function abrirModalProjeto(id, nome, dataSubmissao, status, descricao) {
+            document.getElementById('modalNomeProjeto').textContent = nome;
+            document.getElementById('modalDataSubmissao').textContent = dataSubmissao;
+            document.getElementById('modalStatus').textContent = status;
+            document.getElementById('modalDescricao').textContent = descricao;
+            const modal = new bootstrap.Modal(document.getElementById('modalProjeto'));
+            modal.show();
+        }
+
+        // Função para aprovar o projeto
+        function aprovarProjeto(btn, id) {
+            fetch(`/aprovar_projeto/${id}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        btn.closest('tr').querySelector('td:nth-child(4)').innerHTML = '<span class="badge bg-success">Aprovado</span>';
+                    } else {
+                        alert(data.message || 'Erro ao aprovar o projeto.');
+                    }
+                });
+        }
+
+        // Função para rejeitar o projeto
+        function rejeitarProjeto(btn, id) {
+            fetch(`/rejeitar_projeto/${id}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        btn.closest('tr').querySelector('td:nth-child(4)').innerHTML = '<span class="badge bg-danger">Rejeitado</span>';
+                    } else {
+                        alert(data.message || 'Erro ao rejeitar o projeto.');
+                    }
+                });
+        }
+
+        // Gerar relatório
+        function gerarRelatorio(format) {
+            alert(`Gerando relatório no formato ${format}`);
+        }
+    </script>
+</body>
+</html>

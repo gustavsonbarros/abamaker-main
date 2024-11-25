@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Link do Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Link para o CSS personalizado (caso tenha) -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        /* Tema escuro */
+        .dark-theme {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .dark-theme .card {
+            background-color: #1e1e1e;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card" style="max-width: 400px; width: 100%; border-radius: 10px;">
+            <div class="card-body">
+                <h2 class="text-center mb-4">Login</h2>
+                
+                <!-- Exibindo mensagens de flash (caso haja) -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="alert alert-danger">
+                            <ul>
+                            {% for category, message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                
+                <!-- Formulário de login -->
+                <form action="{{ url_for('login') }}" method="POST" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">E-mail:</label>
+                        <input type="email" id="email" name="email" class="form-control" required aria-label="Digite seu e-mail" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="senha">Senha:</label>
+                        <div class="input-group">
+                            <input type="password" id="senha" name="senha" class="form-control" required aria-label="Digite sua senha" autocomplete="current-password">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" id="toggleSenha">👁️</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="rememberMe" name="rememberMe" class="form-check-input">
+                        <label class="form-check-label" for="rememberMe">Lembrar-me</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-3" id="loginButton">Entrar</button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('register') }}">Ainda não tem conta? Cadastre-se</a>
+                </div>
+                <div class="text-center mt-2">
+                    <a href="{{ url_for('forgot_password') }}">Esqueci minha senha</a>
+                </div>
+
+                <div class="text-center mt-3">
+                    <button class="btn btn-danger btn-block">Login com Google</button>
+                    <button class="btn btn-primary btn-block">Login com Facebook</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão para alternar o tema -->
+    <div class="position-fixed" style="bottom: 20px; right: 20px;">
+        <button id="toggleTheme" class="btn btn-secondary">Modo Escuro</button>
+    </div>
+
+    <!-- Scripts do Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Validação no lado do cliente
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            var email = document.getElementById('email').value;
+            var senha = document.getElementById('senha').value;
+
+            if (!email || !senha) {
+                alert("Por favor, preencha todos os campos.");
+                event.preventDefault(); // Impede o envio do formulário se algum campo estiver vazio
+            }
+
+            // Mudando o texto do botão de login para "Carregando..."
+            document.getElementById('loginButton').innerHTML = "Carregando...";
+            document.getElementById('loginButton').disabled = true;
+        });
+
+        // Mostrar/Ocultar senha
+        document.getElementById('toggleSenha').addEventListener('click', function() {
+            const senhaField = document.getElementById('senha');
+            senhaField.type = senhaField.type === 'password' ? 'text' : 'password';
+        });
+
+        // Alternar tema claro/escuro
+        document.getElementById('toggleTheme').addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Maker - Conectando Projetos Educacionais</title>
+
+    <!-- Fontes do Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!-- Animações de transição suaves -->
+    <style>
+        .navbar {
+            transition: background-color 0.3s;
+        }
+        .navbar.scrolled {
+            background-color: #343a40;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de Navegação Principal (Sticky) -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="navbar">
+        <a class="navbar-brand" href="#">Sistema Maker</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Início</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('projetos') }}">Projetos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#feedback">Feedback</a></li>
+                <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-outline-primary" href="{{ url_for('register') }}">Cadastrar</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-outline-secondary ml-2" href="{{ url_for('login') }}">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Cabeçalho de Apresentação -->
+    <header class="jumbotron text-center mt-4" id="home">
+        <h1 class="display-4">Bem-vindo ao ABA - Maker</h1>
+        <p class="lead">Plataforma para conectar projetos educacionais.</p>
+        <a href="{{ url_for('register') }}" class="btn btn-outline-light btn-lg mt-3">Cadastre-se</a>
+    </header>
+
+    <!-- Carrossel de Projetos em Destaque -->
+    <section id="projetos" class="container my-5">
+        <h2 class="text-center mb-4">Projetos em Destaque</h2>
+        <div id="carouselProjetos" class="carousel slide" data-ride="carousel">
+            <!-- Indicadores do Carrossel -->
+            <ol class="carousel-indicators">
+                <li data-target="#carouselProjetos" data-slide-to="0" class="active"></li>
+                <li data-target="#carouselProjetos" data-slide-to="1"></li>
+                <li data-target="#carouselProjetos" data-slide-to="2"></li>
+            </ol>
+
+            <!-- Conteúdo do Carrossel -->
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="{{ url_for('static', filename='img/projeto1.png') }}" class="d-block w-100" alt="Projeto 1">
+                    <div class="carousel-caption d-none d-md-block bg-dark opacity-75 p-2">
+                        <p>Uma inovação no aprendizado maker.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='img/projeto2.jpg') }}" class="d-block w-100" alt="Projeto 2">
+                    <div class="carousel-caption d-none d-md-block bg-dark opacity-75 p-2">
+                        <p>Desenvolvimento de novas tecnologias de ensino.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="{{ url_for('static', filename='img/projeto3.png') }}" class="d-block w-100" alt="Projeto 3">
+                    <div class="carousel-caption d-none d-md-block bg-dark opacity-75 p-2">
+                        <p>Explorando o futuro da educação online.</p>
+                    </div>
+                </div>
+            </div>
+
+            <a class="carousel-control-prev" href="#carouselProjetos" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselProjetos" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Cards de Projetos -->
+    <section id="cards" class="container my-5">
+        <h3 class="text-center mb-4">Explore nossos Projetos</h3>
+        <div class="row">
+            <!-- Card 1 -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <img src="{{ url_for('static', filename='img/card01.jpg') }}" class="card-img-top" alt="Imagem 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Robótica Educacional</h5>
+                        <p class="card-text">Explore a robótica como ferramenta de ensino, incentivando a criatividade e o pensamento lógico nos alunos.</p>
+                        <button class="btn btn-primary" onclick="curtir('curtir1')">Curtir</button>
+                        <span id="curtir1" class="ml-2">0 curtidas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <img src="{{ url_for('static', filename='img/card2.webp') }}" class="card-img-top" alt="Imagem 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Programação para Crianças</h5>
+                        <p class="card-text">Ensine programação para crianças de forma divertida e criativa, estimulando o pensamento computacional.</p>
+                        <button class="btn btn-primary" onclick="curtir('curtir2')">Curtir</button>
+                        <span id="curtir2" class="ml-2">0 curtidas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card">
+                    <img src="{{ url_for('static', filename='img/card3.jpg') }}" class="card-img-top" alt="Imagem 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Inteligência Artificial na Educação</h5>
+                        <p class="card-text">Descubra como a inteligência artificial pode revolucionar o aprendizado e a personalização do ensino.</p>
+                        <button class="btn btn-primary" onclick="curtir('curtir3')">Curtir</button>
+                        <span id="curtir3" class="ml-2">0 curtidas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+   <!-- Seção de Feedback -->
+   <section id="feedback" class="container my-5">
+    <h2 class="text-center mb-4">Feedback</h2>
+    <form id="feedbackForm">
+        <!-- Nome -->
+        <div class="form-group">
+            <label for="nome">Nome</label>
+            <input type="text" class="form-control" id="nome" placeholder="Seu nome" required>
+            <small id="nomeError" class="form-text text-danger" style="display: none;">O nome é obrigatório.</small>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Seu email" required>
+            <small id="emailError" class="form-text text-danger" style="display: none;">Insira um email válido.</small>
+        </div>
+
+        <!-- Comentário -->
+        <div class="form-group">
+            <label for="comentario">Comentário</label>
+            <textarea class="form-control" id="comentario" rows="4" placeholder="Sua opinião sobre a plataforma" required></textarea>
+            <small id="comentarioError" class="form-text text-danger" style="display: none;">O comentário é obrigatório.</small>
+        </div>
+
+        <!-- Botão de Envio -->
+        <button type="submit" class="btn btn-primary">Enviar Feedback</button>
+    </form>
+
+    <!-- Mensagem de Sucesso -->
+    <div id="successMessage" class="alert alert-success mt-3" style="display: none;">
+        <strong>Obrigado pelo seu feedback!</strong> Nós valorizamos sua opinião.
+    </div>
+
+    <!-- Mensagem de Erro -->
+    <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;">
+        <strong>Erro!</strong> Não foi possível enviar o feedback. Tente novamente mais tarde.
+    </div>
+</section>
+
+<script>
+    document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Impede o envio padrão do formulário
+
+        // Limpar mensagens de erro
+        document.getElementById('nomeError').style.display = 'none';
+        document.getElementById('emailError').style.display = 'none';
+        document.getElementById('comentarioError').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
+        document.getElementById('errorMessage').style.display = 'none';
+
+        let valid = true;
+
+        // Validação de nome
+        if (document.getElementById('nome').value.trim() === '') {
+            valid = false;
+            document.getElementById('nomeError').style.display = 'block';
+        }
+
+        // Validação de email
+        const email = document.getElementById('email').value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            valid = false;
+            document.getElementById('emailError').style.display = 'block';
+        }
+
+        // Validação de comentário
+        if (document.getElementById('comentario').value.trim() === '') {
+            valid = false;
+            document.getElementById('comentarioError').style.display = 'block';
+        }
+
+        // Se o formulário for válido
+        if (valid) {
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('feedbackForm').reset();
+        } else {
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+    });
+</script>
+
+
+<!-- FAQ -->
+<section id="faq" class="container my-5">
+    <h2 class="text-center mb-4">Perguntas Frequentes (FAQ)</h2>
+    <div class="accordion" id="faqAccordion">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        O que é o ABA Maker?
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#faqAccordion">
+                <div class="card-body">
+                    O ABA Maker é uma plataforma que conecta projetos educacionais, permitindo colaboração, compartilhamento de ideias e recursos, e o desenvolvimento de soluções criativas. Ele visa fortalecer a aprendizagem por meio de projetos práticos.
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Como posso cadastrar meu projeto?
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#faqAccordion">
+                <div class="card-body">
+                    Para cadastrar seu projeto, basta clicar no botão de "Cadastrar" no menu principal. Preencha as informações necessárias, como título, descrição e área de atuação. Após o cadastro, você poderá gerenciar, editar e divulgar seu projeto para a comunidade.
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header" id="headingThree">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        O que é necessário para participar?
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#faqAccordion">
+                <div class="card-body">
+                    Para participar do ABA Maker, você precisa criar uma conta no sistema. Após o cadastro, você pode começar a explorar projetos existentes, criar os seus próprios e colaborar com outros usuários. Não há custos para se cadastrar ou participar!
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header" id="headingFour">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        Como posso colaborar com outros projetos?
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#faqAccordion">
+                <div class="card-body">
+                    Para colaborar com outros projetos, basta se inscrever no projeto que mais lhe interessa e seguir as orientações fornecidas pelo criador do projeto. Você poderá contribuir com ideias, recursos ou até mesmo com o desenvolvimento de soluções específicas.
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header" id="headingFive">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                        O Sistema Maker oferece algum tipo de suporte técnico?
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#faqAccordion">
+                <div class="card-body">
+                    Sim! O ABA Maker oferece suporte técnico para ajudá-lo com qualquer problema que possa encontrar durante o uso da plataforma. Você pode entrar em contato com nossa equipe através do formulário de contato ou diretamente pelo suporte disponível no painel do usuário.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Rodapé -->
+    <footer class="bg-dark text-white text-center py-4">
+        <p>&copy; Desenvolvido por Gustavson Barros - 2024 ABA Maker. Todos os direitos reservados.</p>
+        <div>
+            <!-- Links para as redes sociais com URLs reais -->
+            <a href="https://github.com/gustavsonbarros" class="text-white mr-3" target="_blank" rel="noopener noreferrer">Github</a>
+            <a href="https://www.linkedin.com/in/gustavsonbarros/" class="text-white mr-3" target="_blank" rel="noopener noreferrer">Linkedin</a>
+            <a href="https://www.instagram.com/gustavsong10/" class="text-white" target="_blank" rel="noopener noreferrer">Instagram</a>
+        </div>
+    </footer>
+    
+
+    <!-- Scripts JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Função para atualizar o contador de curtidas
+        function curtir(id) {
+            var curtidas = document.getElementById(id);
+            var contador = parseInt(curtidas.innerText.split(' ')[0]);
+            contador++;
+            curtidas.innerText = contador + " curtidas";
+        }
+
+        // Efeito de navegação fixa para a barra de navegação
+        window.onscroll = function() {
+            if (window.pageYOffset > 50) {
+                document.getElementById("navbar").classList.add("scrolled");
+            } else {
+                document.getElementById("navbar").classList.remove("scrolled");
+            }
+        };
+    </script>
+
+</body>
+</html>

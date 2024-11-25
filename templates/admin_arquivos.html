@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquivos Enviados - Painel Administrativo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container my-5">
+        <h1 class="mb-4">Arquivos Enviados</h1>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nome do Arquivo</th>
+                    <th>Usuário</th>
+                    <th>Email</th>
+                    <th>Data de Envio</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for arquivo, usuario in arquivos %}
+                <tr>
+                    <td>{{ arquivo.id }}</td>
+                    <td>{{ arquivo.nome }}</td>
+                    <td>{{ usuario.nome }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ arquivo.data_envio.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                    <td>
+                        <a href="{{ url_for('download', filename=arquivo.nome) }}" class="btn btn-success btn-sm">Baixar</a>
+                        <a href="{{ url_for('delete', filename=arquivo.nome) }}" class="btn btn-danger btn-sm">Excluir</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

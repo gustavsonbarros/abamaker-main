@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projetos</title>
+    <!-- Incluir Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">     
+    <style>
+        /* Estilos para o Cabeçalho */
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .btn-voltar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .btn-voltar:hover {
+            background-color: #0056b3;
+        }
+        .btn-voltar i {
+            margin-right: 8px;
+        }
+
+        /* Estilos para os cards dos projetos */
+        .project-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+        .project-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .status-ativo {
+            background-color: #28a745;
+            color: white;
+        }
+        .status-inativo {
+            background-color: #dc3545;
+            color: white;
+        }
+        .progress-bar {
+            height: 8px;
+            background-color: #007bff;
+        }
+        .like-btn {
+            cursor: pointer;
+        }
+        .like-count {
+            font-size: 14px;
+            margin-left: 8px;
+        }
+        .filter-section {
+            margin-bottom: 30px;
+        }
+        .filter-section select {
+            width: 150px;
+        }
+        .search-section {
+            margin-bottom: 20px;
+        }
+        .project-card {
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <div class="header">
+        <h1>Projetos</h1>
+    </div>
+
+    <!-- Botão Voltar -->
+    <button onclick="window.history.back();" class="btn-voltar">
+        <i class="fas fa-arrow-left"></i> <span>Voltar</span>
+    </button>
+
+    <a href="{{ url_for('adicionar_projeto') }}" class="btn btn-success mb-4">Adicionar Projeto</a>
+
+
+    <div class="container mt-4">
+        <!-- Campo de Pesquisa -->
+        <div class="search-section mb-4">
+            <input type="text" id="search-input" class="form-control" placeholder="Pesquisar por nome do projeto" />
+        </div>
+
+        <!-- Filtros -->
+        <div class="filter-section d-flex justify-content-between mb-4">
+            <select class="form-select w-auto" id="filter-status">
+                <option value="">Filtrar por Status</option>
+                <option value="Ativo">Ativo</option>
+                <option value="Inativo">Inativo</option>
+                <option value="Concluído">Concluído</option>
+                <option value="Em andamento">Em andamento</option>
+            </select>
+            <select class="form-select w-auto" id="filter-date">
+                <option value="">Filtrar por Data</option>
+                <option value="mais-recente">Mais Recentes</option>
+                <option value="mais-antigo">Mais Antigos</option>
+            </select>
+        </div>
+
+        <!-- Grid de Projetos -->
+        <div class="row" id="project-grid">
+            <!-- Cards dos projetos vão aqui -->
+        </div>
+    </div>
+
+    <script>
+        const projects = [
+            { 
+                title: "Transformando Ideias em Resultados", 
+                date: "2023-05-10", 
+                status: "Ativo", 
+                image: "/static/img/cardproject01.jpg", 
+                progress: 50, 
+                likes: 0 
+            },
+            { 
+                title: "Rumo ao Sucesso", 
+                date: "2023-05-10", 
+                status: "Ativo", 
+                image: "/static/img/cardproject02.jpg", 
+                progress: 50, 
+                likes: 0 
+            },
+            { 
+                title: "Desenvolvimento Inteligente", 
+                date: "2023-06-01", 
+                status: "Ativo", 
+                image: "/static/img/cardproject03.png", 
+                progress: 70, 
+                likes: 0 
+            },
+            { 
+                title: "Conexão e Inovação", 
+                date: "2023-07-20", 
+                status: "Inativo", 
+                image: "/static/img/cardproject04.jpg", 
+                progress: 40, 
+                likes: 0 
+            },
+            { 
+                title: "Tecnologia e Impacto", 
+                date: "2023-08-30", 
+                status: "Ativo", 
+                image: "/static/img/cardproject05.jpg", 
+                progress: 80, 
+                likes: 0 
+            },
+            { 
+                title: "Desenvolvimento Sustentável", 
+                date: "2023-09-15", 
+                status: "Concluído", 
+                image: "/static/img/cardproject06.png", 
+                progress: 100, 
+                likes: 0 
+            },
+            { 
+                title: "Transformação Digital", 
+                date: "2023-10-05", 
+                status: "Em andamento", 
+                image: "/static/img/cardproject07.jpg", 
+                progress: 50, 
+                likes: 0 
+            },
+            { 
+                title: "Novos Desafios", 
+                date: "2023-11-01", 
+                status: "Ativo", 
+                image: "/static/img/cardproject08.jpg", 
+                progress: 20, 
+                likes: 0 
+            }
+        ];
+
+        const filterStatus = document.getElementById("filter-status");
+        const filterDate = document.getElementById("filter-date");
+        const searchInput = document.getElementById("search-input");
+        const projectGrid = document.getElementById("project-grid");
+
+        function renderProjects(filteredProjects) {
+            projectGrid.innerHTML = '';
+            filteredProjects.forEach(project => {
+                const projectCard = `
+                    <div class="col-md-4 mb-4 project-card" data-status="${project.status}" data-date="${project.date}">
+                        <div class="card">
+                            <img src="${project.image}" alt="Projeto" class="project-img">
+                            <div class="card-body">
+                                <h5 class="mt-3">${project.title}</h5>
+                                <p class="text-muted">${project.date}</p>
+                                <span class="status-badge status-${project.status.toLowerCase()}">${project.status}</span>
+                                <div class="progress mt-2">
+                                    <div class="progress-bar" role="progressbar" style="width: ${project.progress}%" aria-valuenow="${project.progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <a href="#" class="btn btn-info btn-sm mt-3">
+                                    <i class="fas fa-info-circle"></i> Detalhes
+                                </a>
+                                <div class="mt-2 d-flex justify-content-between align-items-center">
+                                    <span class="like-count">Curtidas: <span class="like-counter">${project.likes}</span></span>
+                                    <i class="fas fa-heart like-btn" onclick="likeProject(this, ${project.likes})"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                projectGrid.innerHTML += projectCard;
+            });
+        }
+
+        function likeProject(element, likes) {
+            likes++;
+            element.nextElementSibling.innerText = likes;
+        }
+
+        function applyFilters() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const statusFilter = filterStatus.value;
+            const dateFilter = filterDate.value;
+
+            let filteredProjects = projects.filter(project => {
+                let matchesSearch = project.title.toLowerCase().includes(searchTerm);
+                let matchesStatus = statusFilter ? project.status.toLowerCase() === statusFilter.toLowerCase() : true;
+                let matchesDate = true;
+
+                if (dateFilter === "mais-recente") {
+                    matchesDate = new Date(project.date) > new Date('2023-10-01'); // Data arbitrária
+                } else if (dateFilter === "mais-antigo") {
+                    matchesDate = new Date(project.date) < new Date('2023-10-01');
+                }
+
+                return matchesSearch && matchesStatus && matchesDate;
+            });
+
+            renderProjects(filteredProjects);
+        }
+
+        filterStatus.addEventListener("change", applyFilters);
+        filterDate.addEventListener("change", applyFilters);
+        searchInput.addEventListener("input", applyFilters);
+
+        // Renderiza os projetos ao carregar a página
+        renderProjects(projects);
+    </script>
+
+    <!-- Incluir o script do Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

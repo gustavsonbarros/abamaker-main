@@ -1,0 +1,25 @@
+<h2>Instituições</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Instituição</th>
+            <th>Status</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for instituicao in instituicoes %}
+        <tr>
+            <td>{{ instituicao.nome }}</td>
+            <td>{{ instituicao.status }}</td>
+            <td>
+                {% if instituicao.status == 'Aprovada' %}
+                    <a href="{{ url_for('suspender_instituicao', id=instituicao.id) }}" class="btn btn-danger">Suspender</a>
+                {% else %}
+                    <a href="{{ url_for('reativar_instituicao', id=instituicao.id) }}" class="btn btn-success">Reativar</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

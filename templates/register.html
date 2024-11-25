@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - ABA MAKER</title>
+    <!-- Referência para o arquivo CSS externo -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Bootstrap 5 para design responsivo e moderno -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Fontes Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <script>
+        // Função para esconder a mensagem após um tempo (se for sucesso ou erro)
+        function hideMessages() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(function (message) {
+                message.style.display = 'none';
+            });
+        }
+
+        window.onload = function () {
+            // Exibe a mensagem de sucesso ou erro após o cadastro
+            const successMessage = document.querySelector('.alert-success');
+            const errorMessage = document.querySelector('.alert-danger');
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('status')) {
+                if (urlParams.get('status') === 'success') {
+                    successMessage.style.display = 'block';
+                    setTimeout(hideMessages, 5000);
+                } else if (urlParams.get('status') === 'error') {
+                    errorMessage.style.display = 'block';
+                    setTimeout(hideMessages, 5000);
+                }
+            }
+        };
+
+        // Função de validação de senha
+        function validatePassword() {
+            const senha = document.getElementById("senha");
+            const confirmarSenha = document.getElementById("confirmar-senha");
+            if (senha.value !== confirmarSenha.value) {
+                confirmarSenha.setCustomValidity("As senhas não coincidem");
+            } else {
+                confirmarSenha.setCustomValidity("");
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilo personalizado */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        .jumbotron {
+            background: linear-gradient(to right, #007bff, #00c6ff);
+            color: white;
+            padding: 4rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .footer-link a {
+            color: #007bff;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background-color: #f1f1f1;
+            padding: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+            color: #555;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Animação de entrada */
+        .card {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header ou Jumbotron -->
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Bem-vindo ao ABA MAKER</h1>
+        <p class="lead">Crie sua conta para começar a usar o nosso sistema de maneira simples e rápida.</p>
+    </div>
+
+    <!-- Formulário de Cadastro -->
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="card shadow-lg" style="width: 100%; max-width: 450px;">
+            <div class="card-body">
+                <h2 class="text-center mb-4">Cadastro</h2>
+
+                <!-- Flash Message (Mensagem de sucesso ou erro) -->
+                <div class="flash-message" style="display:none;">
+                    <div class="alert alert-success" style="display:none;">
+                        <p><strong>Sucesso!</strong> Cadastro realizado com sucesso!</p>
+                    </div>
+                    <div class="alert alert-danger" style="display:none;">
+                        <p><strong>Erro!</strong> Ocorreu um erro ao realizar o cadastro. Tente novamente.</p>
+                    </div>
+                </div>
+
+                <!-- Formulário de Cadastro -->
+                <form action="/register" method="POST">
+                    <div class="form-group">
+                        <label for="nome">Nome</label>
+                        <input type="text" class="form-control" id="nome" name="nome" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="senha">Senha</label>
+                        <input type="password" class="form-control" id="senha" name="senha" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmar-senha">Confirmar Senha</label>
+                        <input type="password" class="form-control" id="confirmar-senha" name="confirmar-senha" required
+                            oninput="validatePassword()">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
+                </form>
+
+                <!-- Links de navegação -->
+                <div class="footer-link text-center mt-4">
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary mb-2">Voltar para a Página Inicial</a>
+                    <br>
+                    <a href="{{ url_for('login') }}">Já tem uma conta? Faça login aqui</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer>
+        <p>&copy; 2024 ABA MAKER. Todos os direitos reservados.</p>
+    </footer>
+
+    <!-- Scripts Bootstrap e jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>
