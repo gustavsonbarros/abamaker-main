@@ -204,7 +204,7 @@ def adicionar_projeto():
     return render_template('adicionar_projeto.html')
 
 
-@app.route('/aprovar_projeto/<int:id>', methods=['GET'])
+@app.route('/aprovar_projeto/<int:id>', methods=['POST'])
 def aprovar_projeto(id):
     projeto = Projeto.query.get_or_404(id)
     if projeto.status == 'Pendente':

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Painel Administrativo para Gestão de Projetos e Instituições">
     <title>Painel Administrativo</title>
-    
+
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -62,9 +62,7 @@
                 <div class="d-flex justify-content-between mb-3">
                     <input type="text" id="searchInstituicao" class="form-control w-50" placeholder="Pesquisar Instituição">
                     <a href="/adicionar_instituicao" class="btn btn-primary">Adicionar Nova Instituição</a>
-                    <div>
-                        <button class="btn btn-info" onclick="gerarRelatorio('csv')">Gerar Relatório</button>
-                    </div>
+                    <button class="btn btn-info" onclick="gerarRelatorio('csv')">Gerar Relatório</button>
                 </div>
                 <div class="table-responsive mt-3">
                     <table class="table table-bordered table-hover">
@@ -86,7 +84,6 @@
                                     <button class="btn btn-warning btn-sm" onclick="suspenderInstituicao({{ instituicao.id }})">Suspender</button>
                                     <button class="btn btn-success btn-sm" onclick="reativarInstituicao({{ instituicao.id }})">Reativar</button>
                                     <button class="btn btn-danger btn-sm" onclick="confirmarExclusao({{ instituicao.id }}, '{{ instituicao.nome }}')">Excluir</button>
-
                                 </td>
                             </tr>
                             {% endfor %}
@@ -130,8 +127,8 @@
                                             <button class="btn btn-info btn-sm" onclick="abrirModalProjeto({{ projeto.id }}, '{{ projeto.nome }}', '{{ projeto.data_submissao }}', '{{ projeto.status }}', 'Descrição do projeto aqui')">
                                                 Ver Detalhes
                                             </button>
-                                            <button class="btn btn-success btn-sm" onclick="aprovarProjeto(this, {{ projeto.id }})">Aprovar</button>
-                                            <button class="btn btn-danger btn-sm" onclick="rejeitarProjeto(this, {{ projeto.id }})">Rejeitar</button>
+                                            <button class="btn btn-success btn-sm" onclick="aprovarProjeto({{ projeto.id }})">Aprovar</button>
+                                            <button class="btn btn-danger btn-sm" onclick="rejeitarProjeto({{ projeto.id }})">Rejeitar</button>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -170,105 +167,79 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Função de pesquisa nas tabelas
-    function pesquisarTabela(tabelaId, campoPesquisaId) {
-        const tabela = document.getElementById(tabelaId);
-        const filtro = document.getElementById(campoPesquisaId).value.toLowerCase();
-        const linhas = tabela.getElementsByTagName("tr");
+        function pesquisarTabela(tabelaId, campoPesquisaId) {
+            const tabela = document.getElementById(tabelaId);
+            const filtro = document.getElementById(campoPesquisaId).value.toLowerCase();
+            const linhas = tabela.getElementsByTagName("tr");
 
-        // Loop por todas as linhas da tabela
-        for (let i = 0; i < linhas.length; i++) {
-            const linha = linhas[i];
-            const colunas = linha.getElementsByTagName("td");
-            let linhaVisivel = false;
+            Array.from(linhas).forEach(linha => {
+                const colunas = linha.getElementsByTagName("td");
+                let linhaVisivel = false;
 
-            // Loop por todas as colunas da linha
-            for (let j = 0; j < colunas.length; j++) {
-                const coluna = colunas[j];
-                if (coluna && coluna.textContent.toLowerCase().includes(filtro)) {
-                    linhaVisivel = true;
-                    break;
-                }
-            }
+                Array.from(colunas).forEach(coluna => {
+                    if (coluna && coluna.textContent.toLowerCase().includes(filtro)) {
+                        linhaVisivel = true;
+                    }
+                });
 
-            // Exibe ou oculta a linha com base no filtro
-            if (linhaVisivel) {
-                linha.style.display = "";
-            } else {
-                linha.style.display = "none";
-            }
+                linha.style.display = linhaVisivel ? "" : "none";
+            });
         }
-    }
 
-    // Adicionando os event listeners para as pesquisas
-    document.getElementById('searchInstituicao').addEventListener('input', function() {
-        pesquisarTabela('tabelaInstituicoes', 'searchInstituicao');
-    });
+        // Event listeners para pesquisa
+        document.getElementById('searchInstituicao').addEventListener('input', () => {
+            pesquisarTabela('tabelaInstituicoes', 'searchInstituicao');
+        });
 
-    document.getElementById('searchProjeto').addEventListener('input', function() {
-        pesquisarTabela('tabelaProjetos', 'searchProjeto');
-    });
-        // Função para suspender a instituição
+        document.getElementById('searchProjeto').addEventListener('input', () => {
+            pesquisarTabela('tabelaProjetos', 'searchProjeto');
+        });
+
+        // Funções para suspender e reativar instituições
         function suspenderInstituicao(id) {
             fetch(`/suspender_instituicao/${id}`, { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        const row = document.getElementById(`instituicao-${id}`);
-                        row.querySelector('td:nth-child(3)').innerHTML = '<span class="badge bg-warning">Suspensa</span>';
-                        alert(`Instituição '${data.nome}' suspensa com sucesso!`);
-                    } else {
-                        alert(data.message || 'Erro ao suspender a instituição.');
+                        alert('Instituição suspensa com sucesso');
+                        location.reload();
                     }
-                })
-                .catch(error => {
-                    alert("Erro ao comunicar com o servidor: " + error);
                 });
         }
 
-        // Função para reativar a instituição
         function reativarInstituicao(id) {
             fetch(`/reativar_instituicao/${id}`, { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        const row = document.getElementById(`instituicao-${id}`);
-                        row.querySelector('td:nth-child(3)').innerHTML = '<span class="badge bg-success">Aprovada</span>';
-                        alert(`Instituição '${data.nome}' reativada com sucesso!`);
-                    } else {
-                        alert(data.message || 'Erro ao reativar a instituição.');
+                        alert('Instituição reativada com sucesso');
+                        location.reload();
                     }
-                })
-                .catch(error => {
-                    alert("Erro ao comunicar com o servidor: " + error);
                 });
         }
 
-        function confirmarExclusao(id, nome) {
-    if (confirm(`Tem certeza de que deseja excluir a instituição '${nome}'?`)) {
-        excluirInstituicao(id);
-    }
-}
+        // Funções para aprovar e rejeitar projetos
+        function aprovarProjeto(id) {
+            fetch(`/aprovar_projeto/${id}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Projeto aprovado');
+                        location.reload();
+                    }
+                });
+        }
 
-function excluirInstituicao(id) {
-    // Enviar requisição para excluir a instituição via fetch
-    fetch(`/excluir_instituicao/${id}`, { method: 'DELETE' })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Remover a linha da tabela se a exclusão for bem-sucedida
-                const linha = document.getElementById(`instituicao-${id}`);
-                linha.remove();  // Remove a linha da tabela
-
-                alert(`Instituição excluída com sucesso!`);
-            } else {
-                alert(`Erro ao excluir a instituição: ${data.message || 'Erro desconhecido'}`);
-            }
-        })
-        .catch(error => {
-            alert(`Erro de comunicação: ${error}`);
-        });
-}
-
+        function rejeitarProjeto(id) {
+            fetch(`/rejeitar_projeto/${id}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Projeto rejeitado');
+                        location.reload();
+                    }
+                });
+        }
 
         // Função para abrir o modal de detalhes do projeto
         function abrirModalProjeto(id, nome, dataSubmissao, status, descricao) {
@@ -280,35 +251,18 @@ function excluirInstituicao(id) {
             modal.show();
         }
 
-        // Função para aprovar o projeto
-        function aprovarProjeto(btn, id) {
-            fetch(`/aprovar_projeto/${id}`, { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        btn.closest('tr').querySelector('td:nth-child(4)').innerHTML = '<span class="badge bg-success">Aprovado</span>';
-                    } else {
-                        alert(data.message || 'Erro ao aprovar o projeto.');
-                    }
-                });
-        }
-
-        // Função para rejeitar o projeto
-        function rejeitarProjeto(btn, id) {
-            fetch(`/rejeitar_projeto/${id}`, { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        btn.closest('tr').querySelector('td:nth-child(4)').innerHTML = '<span class="badge bg-danger">Rejeitado</span>';
-                    } else {
-                        alert(data.message || 'Erro ao rejeitar o projeto.');
-                    }
-                });
-        }
-
-        // Gerar relatório
-        function gerarRelatorio(format) {
-            alert(`Gerando relatório no formato ${format}`);
+        // Função para confirmar exclusão de instituição
+        function confirmarExclusao(id, nome) {
+            if (confirm(`Você tem certeza que deseja excluir a instituição: ${nome}?`)) {
+                fetch(`/excluir_instituicao/${id}`, { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Instituição excluída');
+                            location.reload();
+                        }
+                    });
+            }
         }
     </script>
 </body>
