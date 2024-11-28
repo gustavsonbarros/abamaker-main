@@ -8,6 +8,7 @@ from flask import send_from_directory
 from flask_babel import Babel, _
 from flask import Response
 import csv
+from io import StringIO
 
 # Configuração da aplicação
 app = Flask(__name__)
@@ -302,22 +303,22 @@ def excluir_instituicao(id):
     db.session.commit()
     return {'success': True, 'nome': instituicao.nome}, 200
 
-@app.route('/gerar_relatorio_csv', methods=['GET'])
-def gerar_relatorio_csv():
-    # Exemplo de dados a serem exportados para CSV
-    instituicoes = get_instituicoes()  # Suponha que você tenha uma função que retorna as instituições
-    
-    # Cabeçalhos do CSV
-    csv_file = "instituicoes.csv"
-    headers = ['ID', 'Nome', 'Status']
-    
-    # Resposta de CSV
-    def generate():
-        yield ','.join(headers) + '\n'
+@app.route('/gerar_relatorio', methods=['GET'])
+def gerar_relatorio():
+    formato = request.args.get('formato', 'csv')
+    if formato == 'csv':
+        # Gera o relatório em CSV
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['ID', 'Nome', 'Status'])  # Cabeçalho
         for instituicao in instituicoes:
-            yield f"{instituicao['id']},{instituicao['nome']},{instituicao['status']}\n"
-    
-    return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": f"attachment;filename={csv_file}"})
+            writer.writerow([instituicao['id'], instituicao['nome'], instituicao['status']])
+        response = make_response(output.getvalue())
+        response.headers["Content-Disposition"] = "attachment; filename=relatorio_instituicoes.csv"
+        response.headers["Content-type"] = "text/csv"
+        return response
+    else:
+        return jsonify({"error": "Formato não suportado"}), 400
 
 
 

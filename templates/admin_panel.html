@@ -166,6 +166,32 @@
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function gerarRelatorio(formato) {
+    // Enviar uma requisição para o servidor para gerar o relatório
+    fetch(`/gerar_relatorio?formato=${formato}`, { method: 'GET' })
+        .then(response => {
+            if (response.ok) {
+                return response.blob(); // Recebe o arquivo como um Blob
+            } else {
+                throw new Error('Erro ao gerar o relatório');
+            }
+        })
+        .then(blob => {
+            // Cria um link para download do arquivo
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `relatorio_instituicoes.${formato}`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        })
+        .catch(error => {
+            alert(error.message);
+        });
+}
+
+
         // Função de pesquisa nas tabelas
         function pesquisarTabela(tabelaId, campoPesquisaId) {
             const tabela = document.getElementById(tabelaId);
