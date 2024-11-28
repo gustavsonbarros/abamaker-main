@@ -472,9 +472,6 @@ def aluno():
         projetos_rejeitados=projetos_rejeitados
     )
 
-
-
-
 @app.route('/projeto/<int:id>', methods=['GET'])
 def detalhes_projeto(id):
     projeto = Projeto.query.get_or_404(id)

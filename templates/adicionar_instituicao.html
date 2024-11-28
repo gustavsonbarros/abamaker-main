@@ -9,11 +9,18 @@
 <body>
     <div class="container mt-5">
         <h1>Adicionar Instituição</h1>
-        <form method="POST" action="/adicionar_instituicao">
+        
+        <!-- Feedback -->
+        <div id="feedback" class="alert d-none" role="alert"></div>
+        
+        <form method="POST" action="/adicionar_instituicao" enctype="multipart/form-data">
+            <!-- Nome da Instituição -->
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome da Instituição</label>
                 <input type="text" class="form-control" id="nome" name="nome" required>
             </div>
+            
+            <!-- Status -->
             <div class="mb-3">
                 <label for="status" class="form-label">Status</label>
                 <select class="form-select" id="status" name="status" required>
@@ -21,9 +28,114 @@
                     <option value="Suspensa">Suspensa</option>
                 </select>
             </div>
+            
+            <!-- Endereço -->
+            <div class="mb-3">
+                <label for="endereco" class="form-label">Endereço</label>
+                <input type="text" class="form-control" id="endereco" name="endereco">
+            </div>
+            
+            <!-- Email de Contato -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Email de Contato</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            
+            <!-- Telefone -->
+            <div class="mb-3">
+                <label for="telefone" class="form-label">Telefone</label>
+                <input type="tel" class="form-control" id="telefone" name="telefone" placeholder="(XX) XXXX-XXXX">
+            </div>
+            
+            <!-- Tipo de Instituição -->
+            <div class="mb-3">
+                <label for="tipo" class="form-label">Tipo de Instituição</label>
+                <select class="form-select" id="tipo" name="tipo" required>
+                    <option value="Publica">Pública</option>
+                    <option value="Privada">Privada</option>
+                    <option value="ONG">ONG</option>
+                </select>
+            </div>
+            
+            <!-- Logotipo -->
+            <div class="mb-3">
+                <label for="logo" class="form-label">Logotipo da Instituição</label>
+                <input type="file" class="form-control" id="logo" name="logo" accept="image/*" onchange="previewLogo(event)">
+                <img id="preview" class="img-fluid mt-3" style="max-width: 150px; display: none;">
+            </div>
+            
+            <!-- Descrição -->
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição/Observações</label>
+                <textarea class="form-control" id="descricao" name="descricao" rows="4"></textarea>
+            </div>
+            
+            <!-- Categorias -->
+            <div class="mb-3">
+                <label for="tags" class="form-label">Categorias</label>
+                <input type="text" class="form-control" id="tags" name="tags" placeholder="Educação, Tecnologia, etc.">
+                <small class="text-muted">Separe as categorias com vírgulas.</small>
+            </div>
+            
+            <!-- CNPJ e botão de busca -->
+            <div class="mb-3">
+                <label for="cnpj" class="form-label">CNPJ</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="Digite o CNPJ">
+                    <button class="btn btn-info" type="button" onclick="buscarDados()">Buscar</button>
+                </div>
+            </div>
+            
+            <!-- Botões -->
             <button type="submit" class="btn btn-primary">Salvar</button>
+            <button type="reset" class="btn btn-danger">Limpar Formulário</button>
             <a href="/admin_panel" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>
+    
+    <script>
+        // Função para pré-visualizar o logotipo
+        function previewLogo(event) {
+            const preview = document.getElementById('preview');
+            const file = event.target.files[0];
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // Função para buscar dados da instituição via CNPJ
+        function buscarDados() {
+            const cnpj = document.getElementById('cnpj').value;
+            if (!cnpj) {
+                alert('Digite um CNPJ válido.');
+                return;
+            }
+            fetch(`/api/instituicao/${cnpj}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('nome').value = data.nome;
+                        document.getElementById('endereco').value = data.endereco;
+                    } else {
+                        alert('CNPJ não encontrado.');
+                    }
+                });
+        }
+
+        // Exibição de mensagens de feedback
+        const feedback = document.getElementById('feedback');
+        if (window.location.search.includes('success=true')) {
+            feedback.className = 'alert alert-success';
+            feedback.textContent = 'Instituição adicionada com sucesso!';
+            feedback.style.display = 'block';
+        } else if (window.location.search.includes('error=true')) {
+            feedback.className = 'alert alert-danger';
+            feedback.textContent = 'Erro ao adicionar a instituição.';
+            feedback.style.display = 'block';
+        }
+    </script>
 </body>
 </html>
