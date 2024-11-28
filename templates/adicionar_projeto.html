@@ -48,6 +48,12 @@
         .d-flex {
             gap: 10px;
         }
+        .img-preview {
+            margin-top: 20px;
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -59,7 +65,7 @@
                         <h1>Adicionar Novo Projeto</h1>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ url_for('adicionar_projeto') }}">
+                        <form method="POST" action="{{ url_for('adicionar_projeto') }}" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="nome" class="form-label">Nome do Projeto</label>
                                 <input type="text" class="form-control" id="nome" name="nome" required placeholder="Digite o nome do projeto">
@@ -76,6 +82,13 @@
                                     <option value="Rejeitado">Rejeitado</option>
                                 </select>
                             </div>
+                            <div class="mb-3">
+                                <label for="imagem" class="form-label">Imagem do Projeto</label>
+                                <input type="file" class="form-control" id="imagem" name="imagem" accept="image/*" onchange="previewImage(event)">
+                            </div>
+                            <div class="mb-3">
+                                <img id="imagemPreview" class="img-preview" src="" alt="Pré-visualização da imagem" style="display:none;">
+                            </div>
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn btn-primary">Adicionar</button>
                                 <a href="{{ url_for('projetos') }}" class="btn btn-secondary">Cancelar</a>
@@ -86,6 +99,23 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            const preview = document.getElementById('imagemPreview');
+
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+
+            if (event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 </body>
