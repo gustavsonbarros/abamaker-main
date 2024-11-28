@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from flask import send_from_directory
+from flask_babel import Babel, _
 from flask import Response
 import csv
 
@@ -17,6 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cimas_maker.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 # Inicializando o banco de dados
 db = SQLAlchemy(app)
@@ -80,6 +82,37 @@ def criar_tabelas_e_inserir_dados():
         db.session.add_all(instituicoes)
 
     db.session.commit()
+
+@app.route('/compartilhar_projeto', methods=['GET', 'POST'])
+def compartilhar_projeto():
+    if 'user_id' not in session or session.get('tipo') != 'aluno':
+        flash("Acesso negado. Faça login como aluno.", "danger")
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        nome = request.form['nome']
+        url_drive = request.form['url_drive']
+        licenca = request.form['licenca']
+
+        # Validar os campos
+        if not nome or not url_drive or not licenca:
+            flash("Todos os campos são obrigatórios.", "danger")
+            return redirect(url_for('compartilhar_projeto'))
+
+        # Criar o projeto e salvar no banco
+        novo_projeto = Projeto(
+            nome=nome,
+            data_submissao=datetime.now().strftime('%Y-%m-%d'),
+            status="Pendente"  # Pode ser "Pendente" ou outro status conforme necessário
+        )
+        db.session.add(novo_projeto)
+        db.session.commit()
+
+        flash("Projeto compartilhado com sucesso!", "success")
+        return redirect(url_for('aluno'))  # Redireciona para a página do aluno (ou outra página desejada)
+
+    return render_template('compartilhar_projeto.html')  # Crie esse template com o formulário
+
 
 @app.route('/editar_perfil')
 def editar_perfil():
@@ -154,6 +187,21 @@ def register():
 
     return render_template('register.html')
 
+
+@app.route('/filtrar_projetos', methods=['GET'])
+def filtrar_projetos():
+    status = request.args.get('status', '')
+    instituicao = request.args.get('instituicao', '')
+
+    query = Projeto.query
+    if status:
+        query = query.filter_by(status=status)
+    if instituicao:
+        query = query.join(Instituicao).filter(Instituicao.nome.ilike(f"%{instituicao}%"))
+
+    projetos = query.all()
+    return render_template('aluno.html', projetos=projetos)
+
 @app.route('/adicionar_instituicao', methods=['GET', 'POST'])
 def adicionar_instituicao():
     if 'user_id' not in session or session.get('tipo') != 'admin':
@@ -179,29 +227,32 @@ def adicionar_instituicao():
 
 @app.route('/adicionar_projeto', methods=['GET', 'POST'])
 def adicionar_projeto():
-    if 'user_id' not in session or session.get('tipo') != 'admin':
-        flash("Acesso negado. Faça login como admin.", "danger")
-        return redirect(url_for('login'))
-
     if request.method == 'POST':
         nome = request.form['nome']
-        data_submissao = request.form['data_submissao']
-        status = request.form['status']
-
+        url_drive = request.form['url_drive']
+        licenca = request.form['licenca']
+        
         # Validação dos campos
-        if not nome or not data_submissao or not status:
-            flash("Todos os campos são obrigatórios!", "danger")
-            return redirect(url_for('adicionar_projeto'))
+        if not nome or not url_drive or not licenca:
+            flash("Todos os campos são obrigatórios.", "danger")
+            return redirect(url_for('aluno'))
 
         # Criar novo projeto
-        novo_projeto = Projeto(nome=nome, data_submissao=data_submissao, status=status)
+        novo_projeto = Projeto(
+            nome=nome,
+            url_drive=url_drive,
+            licenca=licenca,
+            data_submissao=datetime.now().strftime('%Y-%m-%d'),
+            status="Pendente"
+        )
         db.session.add(novo_projeto)
         db.session.commit()
 
-        flash("Projeto adicionado com sucesso!", "success")
-        return redirect(url_for('projetos'))
+        flash("Projeto cadastrado com sucesso!", "success")
+        return redirect(url_for('aluno'))
 
     return render_template('adicionar_projeto.html')
+
 
 
 @app.route('/aprovar_projeto/<int:id>', methods=['POST'])

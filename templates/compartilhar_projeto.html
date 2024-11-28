@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compartilhar Projeto</title>
+    <!-- Link para o Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Botão de Voltar -->
+        <a href="{{ url_for('aluno') }}" class="btn btn-secondary mb-4"><i class="bi bi-arrow-left"></i> Voltar para a Dashboard</a>
+
+        <!-- Título -->
+        <h2 class="text-center mb-4">Compartilhar Novo Projeto</h2>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <!-- Formulário -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('compartilhar_projeto') }}">
+                            <!-- Nome do Projeto -->
+                            <div class="mb-3">
+                                <label for="nome" class="form-label">Nome do Projeto:</label>
+                                <input type="text" id="nome" name="nome" class="form-control" required placeholder="Digite o nome do projeto">
+                            </div>
+
+                            <!-- Link para o Google Drive -->
+                            <div class="mb-3">
+                                <label for="url_drive" class="form-label">Link para o Google Drive:</label>
+                                <input type="url" id="url_drive" name="url_drive" class="form-control" required placeholder="Insira o link do Google Drive">
+                            </div>
+
+                            <!-- Licença -->
+                            <div class="mb-3">
+                                <label for="licenca" class="form-label">Licença:</label>
+                                <select id="licenca" name="licenca" class="form-select" required>
+                                    <option value="MIT">MIT License</option>
+                                    <option value="GPL">GNU General Public License (GPL)</option>
+                                    <option value="CC-BY">Creative Commons BY</option>
+                                </select>
+                            </div>
+
+                            <!-- Botão de Compartilhar -->
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary w-50">Compartilhar Projeto</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link para o JavaScript do Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
